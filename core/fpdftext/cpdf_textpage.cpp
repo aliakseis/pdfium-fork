@@ -237,6 +237,14 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       pCurObj = info_curchar.m_pTextObj;
       bFlagNewRect = true;
     }
+
+    // Split rectangle if characters are too far
+    if (!bFlagNewRect && !rect.IsEmpty() &&
+        info_curchar.m_CharBox.left - rect.right > std::max(info_curchar.m_CharBox.Height(), rect.Height())) {
+      rectArray.push_back(rect);
+      bFlagNewRect = true;
+    }
+
     if (bFlagNewRect) {
       FX_FLOAT orgX = info_curchar.m_OriginX, orgY = info_curchar.m_OriginY;
       CFX_Matrix matrix, matrix_reverse;
